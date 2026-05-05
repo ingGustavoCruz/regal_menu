@@ -9,11 +9,12 @@ $titles  = ['index.php'=>'Platillos','categorias.php'=>'Categorías'];
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= $titles[$current] ?? 'Admin' ?> — RÉGAL</title>
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/images/monito01.png" type="image/png">
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
   <div class="sidebar__brand">
-    <img src="<?= BASE_URL ?>/assets/images/logo-blanco.png" alt="RÉGAL">
+    <img class="login-card__logo" src="<?= BASE_URL ?>/assets/images/regalDorado.png" alt="RÉGAL">
     <div class="sidebar__label">Panel de administración</div>
   </div>
   <nav class="sidebar__nav">

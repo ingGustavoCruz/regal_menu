@@ -38,6 +38,9 @@
     #e9d291 85%,   /* Resaltado Claro */
     #bfa15d 100%   /* Oro Medio */
   );
+  --header-h: 0; /* Header comentado en index.php, ajustar altura si es necesario */
+  --dark2-rgb: 26, 25, 21; /* Añadido para rgba() */
+  --cream-rgb: 249, 244, 235; /* Añadido para rgba() */
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -53,75 +56,124 @@ button,input,select,textarea{font-family:inherit}
 
 /* HERO */
 .hero {
-  background: var(--negro);
+  /* background: var(--negro); */ /* Comentado */
   color: var(--blanco);
   text-align: center;
-  /* Reducimos el padding superior (primer valor) y el inferior (tercer valor) */
-  padding: clamp(1.5rem, 4vw, 3rem) 1.5rem clamp(1.5rem, 4vw, 2.5rem);
+  /* Aumentamos el padding para dar espacio al recuadro */
+  padding: clamp(1.5rem, 5vw, 3rem) 1.5rem;
   position: relative;
   overflow: hidden;
+  /* Fondo de imagen generada */
+  background-image: url('../images/hero-bg.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 20% 50%,rgba(0,83,75,0.18) 0%,transparent 70%),radial-gradient(ellipse 50% 70% at 80% 40%,rgba(130,111,97,0.14) 0%,transparent 70%);pointer-events:none}
+/* Ya no necesitamos el tinte radial */
+.hero::before { display: none; }
 .hero__subtitle{font-size:clamp(0.7rem,2vw,0.8rem);letter-spacing:0.3em;text-transform:uppercase;color:var(--topo-claro);margin-bottom:0.6rem}
-.hero__title{font-family:var(--font-titulo);font-size:clamp(2.2rem,7vw,4.5rem);font-weight:400;line-height:1.1;margin-bottom:1rem}
+.hero__title {
+  font-family: var(--font-titulo);
+  /* Antes era: clamp(2rem, 6vw, 3.5rem) -> Ahora es ~0.75x menor */
+  font-size: clamp(1.5rem, 4.5vw, 2.6rem); 
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: var(--blanco); 
+}
 .hero__desc{font-size:clamp(0.9rem,2.5vw,1.05rem);color:rgba(255,255,255,0.65);max-width:42ch;margin:0 auto 2rem}
-.hero__divider{width:60px;height:2px;background:var(--verde);margin:0 auto;border-radius:2px}
-/* NUEVA CLASE PARA EL LOGO METÁLICO (con la magia del degradado) */
-/* CONTENEDOR MAGICO (Centra y prepara el tinte) */
+/* 1. CAMBIAR LA LÍNEA A DORADO */
+.hero__divider {
+  width: 60px;
+  height: 2px;
+  background: var(--gold); /* Aquí cambiamos de --verde a --gold */
+  margin: 0 auto;
+  border-radius: 2px;
+}
+/* ==========================================
+   CAJA TRANSLÚCIDA DEL HERO (El sombreado)
+   ========================================== */
+/* LA CAJA NEGRA TRANSLÚCIDA */
+.hero__content-box {
+  background: rgba(26, 25, 21, 0.75); 
+  backdrop-filter: blur(8px); 
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  /* También reducimos un poco el relleno interno de esta caja para ahorrar espacio */
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  max-width: 60ch;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2; 
+}
+
+/* LOGO DENTRO DE LA CAJA */
 .hero__logo-tint {
   position: relative;
   display: flex;
   justify-content: center;
-  max-width: max-content;
   margin: 0 auto 1.5rem auto;
 }
 
-/* APLICAMOS EL DEGRADADO DORADO METÁLICO (con la técnica que sí funciona para imágenes) */
-.hero__logo-tint:after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gold-metallic-gradient); /* Usamos el degradado dorado */
-  mix-blend-mode: multiply; 
-  pointer-events: none; 
-}
-
-/* LOGO BASE */
-.hero__logo {
-  height: 150px; 
-  width: auto;
-  object-fit: contain;
-  display: block;
-  transition: transform var(--transition);
-}
-
-.hero__logo:hover {
-  transform: scale(1.03); 
+/* Quitamos el ::after para que luzca tu PNG original sin filtros raros */
+.hero__logo-tint:after { 
+  display: none; 
 }
 
 /* MODIFICAMOS LA CLASE EXISTENTE (Le quitamos centrado y márgenes para dárselos al contenedor) */
 .hero__logo {
-  height: 150px;
+  /* Antes era: clamp(90px, 15vw, 130px) -> Ahora es ~1.25x mayor */
+  height: clamp(112px, 18vw, 162px); 
   width: auto;
   object-fit: contain;
-  /* margin: 0 auto 1.5rem auto; <-- ELIMINAR O COMENTAR ESTA LÍNEA, ahora lo hace .hero__logo-tint */
   display: block;
   transition: transform var(--transition);
+  position: relative; 
+  z-index: 1; 
 }
 
 .hero__logo:hover {
   transform: scale(1.03);
 }
-/* FILTROS */
+/* 2. OSCURECER LA BARRA DE FILTROS */
 .filtros {
   position: sticky;
-  top: 0; /* Actualizamos este valor */
-  z-index: 90;;background:rgba(250,249,247,0.97);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-.filtros__inner{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 clamp(1rem,4vw,2.5rem);-webkit-overflow-scrolling:touch}
-.filtros__inner::-webkit-scrollbar{display:none}
-.filtros__btn{flex-shrink:0;padding:1rem 1.25rem;font-size:0.82rem;font-weight:500;letter-spacing:0.08em;color:var(--text-muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:color var(--transition),border-color var(--transition);white-space:nowrap}
-.filtros__btn:hover{color:var(--text-primary)}
-.filtros__btn.activo{color:var(--verde);border-bottom-color:var(--verde)}
+  top: 0; 
+  z-index: 90;
+  background: rgba(26, 25, 21, 0.95); /* Fondo oscuro translúcido */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15); /* Borde inferior sutilmente dorado */
+}
+
+/* 3. COLORES DE LOS BOTONES DEL FILTRO */
+.filtros__btn {
+  flex-shrink: 0;
+  padding: 1rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(249, 244, 235, 0.6); /* Letras color crema apagado */
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+
+.filtros__btn:hover {
+  color: var(--cream); /* Crema brillante al pasar el mouse */
+}
+
+.filtros__btn.activo {
+  color: var(--gold); /* Texto dorado para la categoría activa */
+  border-bottom-color: var(--gold); /* Línea dorada para la categoría activa */
+}
 
 /* MENÚ SECTION */
 .menu-section {

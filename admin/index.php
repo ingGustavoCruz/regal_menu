@@ -137,18 +137,17 @@ require __DIR__ . '/partials/header.php';
             </td>
             <td>
               <div class="td-actions">
-                <!-- Editar -->
                 <button class="btn btn--outline btn--sm"
                   onclick="abrirEditar({
                     id:'<?= $p['id'] ?>',
-                    nombre:<?= json_encode($p['nombre']) ?>,
-                    descripcion:<?= json_encode($p['descripcion']) ?>,
+                    nombre:<?= htmlspecialchars(json_encode($p['nombre']), ENT_QUOTES, 'UTF-8') ?>,
+                    descripcion:<?= htmlspecialchars(json_encode($p['descripcion']), ENT_QUOTES, 'UTF-8') ?>,
                     precio:'<?= $p['precio'] ?>',
                     categoria_id:'<?= $p['categoria_id'] ?>',
                     disponible:'<?= $p['disponible'] ?>',
                     destacado:'<?= $p['destacado'] ?>',
-                    imagen:<?= json_encode($p['imagen']) ?>,
-                    imagen_url:<?= json_encode($p['imagen'] ? BASE_URL . '/assets/images/uploads/' . $p['imagen'] : '') ?>
+                    imagen:<?= htmlspecialchars(json_encode($p['imagen']), ENT_QUOTES, 'UTF-8') ?>,
+                    imagen_url:<?= htmlspecialchars(json_encode($p['imagen'] ? BASE_URL . '/assets/images/uploads/' . $p['imagen'] : ''), ENT_QUOTES, 'UTF-8') ?>
                   })">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   Editar

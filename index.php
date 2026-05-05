@@ -45,7 +45,7 @@ if ($cats) {
 <!-- ── NAVBAR ────────────────────────────────────────────── -->
 <!-- <header class="navbar">
   <a class="navbar__logo" href="<?= BASE_URL ?>">
-    <img src="<?= BASE_URL ?>/assets/images/logo-blanco.png" alt="RÉGAL Coffee + Lounge">
+    <img src="<?= BASE_URL ?>/assets/images/regalDorado.png" alt="RÉGAL Coffee + Lounge">
   </a>
   
  <span class="navbar__tagline">Menú</span>
@@ -53,14 +53,14 @@ if ($cats) {
 
 <!-- ── HERO ──────────────────────────────────────────────── -->
 <section class="hero">
-  <div class="hero__logo-tint">
-    <img src="<?= BASE_URL ?>/assets/images/RÉGAL_B.png" alt="Régal Coffee + Lounge" class="hero__logo">
-  </div>
-  
-  <h1 class="hero__title">Nuestra Carta</h1>
-  <p class="hero__desc">Ingredientes seleccionados, preparaciones cuidadosas y un ambiente que invita a quedarse.</p>
-  <div class="hero__divider"></div>
-</section>
+  <div class="hero__content-box"> <div class="hero__logo-tint">
+      <img src="<?= BASE_URL ?>/assets/images/regalDorado.png" alt="Régal Coffee + Lounge" class="hero__logo">
+    </div>
+    
+    <h1 class="hero__title">Nuestra Carta</h1>
+    <p class="hero__desc">Ingredientes seleccionados, preparaciones cuidadosas y una experiencia hecha para disfrutarse.</p>
+    <div class="hero__divider"></div>
+  </div> </section>
 
 <?php if ($cats): ?>
 

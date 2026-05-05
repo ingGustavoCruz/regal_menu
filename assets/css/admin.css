@@ -144,9 +144,35 @@ textarea.form-control{resize:vertical;min-height:80px}
 .pagination .current{background:var(--verde);color:#fff;border-color:var(--verde)}
 
 /* LOGIN PAGE */
-.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--negro);padding:1.5rem}
-.login-card{background:#fff;border-radius:16px;padding:clamp(2rem,5vw,3rem);width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
-.login-card__logo{height:50px;margin:0 auto 1.5rem}
+/* LOGIN PAGE */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  /* Reemplazamos el fondo sólido por la imagen con un overlay oscuro para que la tarjeta resalte */
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/hero-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: clamp(2rem, 5vw, 3rem);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); /* Oscurecí un poco la sombra para que contraste mejor con la foto */
+}
+
+.login-card__logo {
+  height: 100px; /* Tamaño duplicado (antes 50px) */
+  width: auto;   /* Mantiene la proporción */
+  object-fit: contain;
+  margin: 0 auto 1.5rem;
+}
 .login-card__title{font-family:var(--font-titulo);font-size:1.6rem;text-align:center;margin-bottom:0.3rem}
 .login-card__sub{text-align:center;font-size:0.85rem;color:var(--text-muted);margin-bottom:2rem}
 
@@ -163,4 +189,51 @@ textarea.form-control{resize:vertical;min-height:80px}
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr}
   .table-toolbar{flex-direction:column;align-items:flex-start}
+}
+
+/* =========================================================
+   ADECUACIONES LOOK & FEEL FOTOGRÁFICO (CLIENTE RÉGAL)
+   ========================================================= */
+
+/* 1. Fondo general inmersivo fijado al body */
+body {
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../images/hero-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Evita que el fondo se mueva al hacer scroll */
+}
+
+/* 2. Barra lateral semi-transparente con efecto cristal */
+.sidebar {
+  background: rgba(0, 0, 0, 0.75); 
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(10px);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 3. Aumentamos la presencia del logo en el sidebar */
+.sidebar__brand img {
+  height: 55px; /* Duplicamos la proporción aproximada */
+  margin: 0 auto;
+}
+
+/* 4. Barra superior (Topbar) ligeramente translúcida con sombra */
+.admin-topbar {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 5. Ajuste de tarjetas y tabla para que "floten" sobre el fondo oscuro */
+.stat-card, .table-wrap {
+  background: rgba(255, 255, 255, 0.98);
+  border: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* 6. Modales (para que combinen con la nueva profundidad) */
+.modal {
+  background: rgba(255, 255, 255, 0.98);
+  border: none;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
 }

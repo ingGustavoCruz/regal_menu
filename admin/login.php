@@ -25,10 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — RÉGAL</title>
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/admin.css">
+  <link rel="icon" href="<?= BASE_URL ?>/assets/images/monito01.png" type="image/png">
 </head>
 <body class="login-page">
   <div class="login-card">
-    <img class="login-card__logo" src="<?= BASE_URL ?>/assets/images/logo-negro.png" alt="RÉGAL">
+    <img class="login-card__logo" src="<?= BASE_URL ?>/assets/images/regalDorado.png" alt="RÉGAL">
     <h1 class="login-card__title">Panel de Administración</h1>
     <p class="login-card__sub">Ingresa con tus credenciales para continuar</p>
 
