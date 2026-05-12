@@ -1,18 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Lora:wght@400;500;600&display=swap');
 
 :root {
-  --negro:#000000;--verde:#00534b;--verde-light:#00695e;
-  --topo-claro:#aa9483;--topo-oscuro:#826f61;--blanco:#ffffff;
-  --bg:#f5f3f0;--bg-card:#ffffff;--border:#e2d9d1;
-  --text-primary:#1a1614;--text-secondary:#5c4f47;--text-muted:#8d7b72;
-  --danger:#c0392b;--danger-light:#fdf2f1;
-  --success:#00534b;--success-light:#edf7f6;
-  --warning:#b7860b;--warning-light:#fdf8ec;
-  --font-titulo:'DM Serif Display',serif;--font-body:'Lora',serif;
-  --sidebar-w:260px;--radius:10px;--transition:0.2s ease;
+  /* Paleta Base Oscura (Alineada al Kiosko) */
+  --negro: #000000;
+  --bg: #0b0907;          /* Fondo principal */
+  --bg-card: #17130f;     /* Fondo de tarjetas y tablas */
+  --border: rgba(200, 155, 79, 0.15); /* Bordes dorados sutiles */
+  
+  /* Textos */
+  --text-primary: #1a1614; /* Negro suave para títulos y textos principales */
+  --text-secondary: #5c4f47; /* Gris oscuro para subtítulos */
+  --text-muted: #8d7b72; /* Gris medio para textos secundarios */
+  
+  /* Acentos y Estados */
+  --verde: #00534b;
+  --verde-light: #00695e;
+  --gold: #c89b4f;
+  --gold2: #f2c879;
+  
+  /* Colores de Alertas/Badges adaptados a fondo oscuro */
+  --danger: #ff6b6b;
+  --danger-light: rgba(255, 107, 107, 0.15);
+  --success: #4cd137;
+  --success-light: rgba(76, 209, 55, 0.15);
+  --warning: #fbc531;
+  --warning-light: rgba(251, 197, 49, 0.15);
+  
+  --font-titulo: 'DM Serif Display', serif;
+  --font-body: 'Lora', serif;
+  --sidebar-w: 260px;
+  --radius: 12px;
+  --transition: 0.2s ease;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font-body);background:var(--bg);color:var(--text-primary);line-height:1.6;min-height:100vh;display:flex}
+/* 1. Fondo general negro puro (para Admin y Login) */
+body {
+  background-image: none !important;
+  background-color: #000000;
+  color: var(--text-primary); /* Texto oscuro para el Admin general */
+}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font-family:inherit}
@@ -144,7 +170,6 @@ textarea.form-control{resize:vertical;min-height:80px}
 .pagination .current{background:var(--verde);color:#fff;border-color:var(--verde)}
 
 /* LOGIN PAGE */
-/* LOGIN PAGE */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -177,6 +202,7 @@ textarea.form-control{resize:vertical;min-height:80px}
 .login-card__sub{text-align:center;font-size:0.85rem;color:var(--text-muted);margin-bottom:2rem}
 
 /* RESPONSIVE ADMIN */
+/* RESPONSIVE ADMIN */
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
@@ -192,48 +218,238 @@ textarea.form-control{resize:vertical;min-height:80px}
 }
 
 /* =========================================================
-   ADECUACIONES LOOK & FEEL FOTOGRÁFICO (CLIENTE RÉGAL)
+   ADECUACIONES LOOK & FEEL (DISEÑO HÍBRIDO RÉGAL)
    ========================================================= */
 
-/* 1. Fondo general inmersivo fijado al body */
+/* 1. Fondo general (Panel principal claro para legibilidad) */
 body {
-  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('../images/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed; /* Evita que el fondo se mueva al hacer scroll */
+  background-image: none !important;
+  background-color: #f5f3f0; /* Fondo gris muy claro */
+  color: var(--text-primary);
 }
 
-/* 2. Barra lateral semi-transparente con efecto cristal */
-.sidebar {
-  background: rgba(0, 0, 0, 0.75); 
-  backdrop-filter: blur(10px); 
-  -webkit-backdrop-filter: blur(10px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
 
-/* 3. Aumentamos la presencia del logo en el sidebar */
+
+/* Duplicar el tamaño del logo en el Sidebar */
 .sidebar__brand img {
-  height: 55px; /* Duplicamos la proporción aproximada */
+  height: 76px; /* El doble de los 38px originales */
+  width: auto;
   margin: 0 auto;
 }
 
-/* 4. Barra superior (Topbar) ligeramente translúcida con sombra */
-.admin-topbar {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: none;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+/* Corrección del elemento activo en el Sidebar (Texto visible) */
+/* Corrección del hover general en el menú (para que destaque sobre el negro puro) */
+.sidebar__nav a:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-/* 5. Ajuste de tarjetas y tabla para que "floten" sobre el fondo oscuro */
-.stat-card, .table-wrap {
-  background: rgba(255, 255, 255, 0.98);
+/* Corrección del elemento activo en el Sidebar (Efecto premium degradado) */
+.sidebar__nav a.activo {
+  color: #f2c879; /* Dorado para destacar */
+  border-left-color: #c89b4f;
+  /* Degradado dorado que se desvanece hacia la derecha */
+  background: linear-gradient(90deg, rgba(200, 155, 79, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+  font-weight: 500; /* Un poco más de peso a la fuente para que resalte */
+}
+
+/* 3. Corrección del texto en el Botón Verde (Nuevo Platillo) */
+.btn--primary {
+  color: #ffffff !important; /* Fuerza el texto blanco */
+}
+
+/* 4. Barra superior y tarjetas (Flotantes y claras) */
+.admin-topbar, .stat-card, .table-wrap {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* 5. LOGIN PAGE - PURE BLACK EDITION (Aislado del resto) */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: #000000 !important; /* Fuerza el fondo negro solo aquí */
+}
+
+/* Tarjeta de Login (Glassmorphism Dorado) */
+.login-card {
+  background: linear-gradient(
+      180deg,
+      rgba(200, 155, 79, 0.06), 
+      rgba(255, 255, 255, 0.01)
+    ),
+    rgba(18, 14, 11, 0.94);
+  border: 1px solid rgba(200, 155, 79, 0.15); 
+  border-radius: 30px;
+  padding: clamp(2rem, 5vw, 3rem);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.login-card__logo {
+  height: 100px; 
+  width: auto;
+  object-fit: contain;
+  margin: 0 auto 1.5rem;
+}
+
+.login-card__title {
+  font-family: var(--font-titulo);
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: #fff3dd; 
+}
+
+.login-card__sub {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #8d7b72; 
+  margin-bottom: 2rem;
+}
+
+/* Inputs del Login Oscuro */
+.login-card .form-control {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  color: #fff3dd;
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+}
+
+.login-card .form-control:focus {
+  outline: none;
+  border-color: #c89b4f; 
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(200, 155, 79, 0.12); 
+}
+
+.login-card .form-label {
+  color: #b8ab99; 
+}
+
+/* Botón de Login (Dorado) */
+.login-card .btn--primary {
+  width: 100%;
+  justify-content: center;
+  background: linear-gradient(135deg, #f2c879, #c89b4f);
+  color: #140d07 !important; /* Fuerza texto oscuro en el botón dorado */
   border: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+  padding: 0.8rem;
+  border-radius: 16px;
 }
 
-/* 6. Modales (para que combinen con la nueva profundidad) */
+.login-card .btn--primary:hover {
+  filter: brightness(1.1);
+}
+/* =========================================================
+   6. CORRECCIÓN DE INPUTS Y SELECTS (PANEL CLARO)
+   ========================================================= */
+
+/* Forzamos fondo claro y borde sutil en los inputs del panel */
+.form-control,
+.search-input {
+  background-color: #ffffff;
+  border: 1px solid #dcd6d0; /* Borde gris sutil */
+  color: var(--text-primary);
+}
+
+/* Aplicamos el estilo de "píldora" redondeado (como en la Imagen 2) 
+   específicamente para la barra de herramientas */
+.table-toolbar .form-control,
+.table-toolbar .search-input {
+  border-radius: 100px;
+}
+
+/* Aseguramos que la lista desplegable del select también sea clara */
+select.form-control option {
+  background-color: #ffffff;
+  color: var(--text-primary);
+}
+
+/* Efecto al hacer clic/enfocar (Borde verde suave) */
+.form-control:focus,
+.search-input:focus {
+  outline: none;
+  border-color: var(--verde) !important;
+  box-shadow: 0 0 0 3px rgba(0, 83, 75, 0.12) !important;
+}
+
+/* =========================================================
+   7. MODALES CLAROS (Estilo Panel Blanco)
+   ========================================================= */
+
+/* Fondo del modal y textos */
 .modal {
-  background: rgba(255, 255, 255, 0.98);
-  border: none;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  background-color: #ffffff !important; 
+  color: var(--text-primary);
+}
+
+/* Bordes divisorios sutiles en cabecera y pie */
+.modal__header, 
+.modal__footer {
+  border-color: #ebe5df !important; 
+}
+
+/* Título oscuro */
+.modal__title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Inputs dentro de los modales (Fondo gris claro tipo Imagen 2) */
+.modal .form-control {
+  background-color: #f8f6f4 !important; /* Gris muy sutil */
+  border: 1px solid #e2dcd6 !important;
+  color: var(--text-primary);
+  border-radius: 8px;
+}
+
+/* Efecto al hacer clic en el input dentro del modal */
+.modal .form-control:focus {
+  background-color: #ffffff !important;
+  border-color: var(--verde) !important;
+  box-shadow: 0 0 0 3px rgba(0, 83, 75, 0.08) !important;
+}
+
+/* Área de subida de imágenes (Upload Area) para fondo claro */
+.upload-area {
+  border: 2px dashed #dcd6d0 !important;
+  background-color: #fcfbfa !important;
+  color: var(--text-muted);
+}
+
+.upload-area:hover, 
+.upload-area.drag {
+  border-color: var(--verde) !important;
+  background-color: var(--success-light) !important;
+}
+
+/* Textos informativos de los labels y hints */
+.modal .form-label {
+  color: var(--text-secondary);
+}
+
+.modal .form-hint, 
+.upload-area__text {
+  color: var(--text-muted);
+}
+
+/* Botón cancelar del modal (borde sutil) */
+.modal__footer .btn--outline {
+  border-color: #dcd6d0;
+  color: var(--text-secondary);
+}
+
+.modal__footer .btn--outline:hover {
+  background-color: #f5f3f0;
+  color: var(--text-primary);
 }

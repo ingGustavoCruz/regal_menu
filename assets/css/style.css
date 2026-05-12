@@ -56,30 +56,23 @@ button,input,select,textarea{font-family:inherit}
 
 /* HERO */
 .hero {
-  /* background: var(--negro); */ /* Comentado */
+  background-color: #000000; /* Fondo negro intenso */
   color: var(--blanco);
   text-align: center;
-  /* Aumentamos el padding para dar espacio al recuadro */
-  padding: clamp(1.5rem, 5vw, 3rem) 1.5rem;
+  padding: clamp(2rem, 5vw, 4rem) 1.5rem; /* Un poco más de aire arriba y abajo */
   position: relative;
   overflow: hidden;
-  /* Fondo de imagen generada */
-  background-image: url('../images/hero-bg.jpg'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 /* Ya no necesitamos el tinte radial */
 .hero::before { display: none; }
 .hero__subtitle{font-size:clamp(0.7rem,2vw,0.8rem);letter-spacing:0.3em;text-transform:uppercase;color:var(--topo-claro);margin-bottom:0.6rem}
 .hero__title {
   font-family: var(--font-titulo);
-  /* Antes era: clamp(2rem, 6vw, 3.5rem) -> Ahora es ~0.75x menor */
   font-size: clamp(1.5rem, 4.5vw, 2.6rem); 
   font-weight: 400;
   line-height: 1.1;
   margin-bottom: 1rem;
-  color: var(--blanco); 
+  color: var(--cream); /* Cambiamos de var(--blanco) a var(--cream) */
 }
 .hero__desc{font-size:clamp(0.9rem,2.5vw,1.05rem);color:rgba(255,255,255,0.65);max-width:42ch;margin:0 auto 2rem}
 /* 1. CAMBIAR LA LÍNEA A DORADO */
@@ -91,19 +84,15 @@ button,input,select,textarea{font-family:inherit}
   border-radius: 2px;
 }
 /* ==========================================
-   CAJA TRANSLÚCIDA DEL HERO (El sombreado)
+   CAJA DEL HERO (Sin sombreado para que flote sobre el negro)
    ========================================== */
-/* LA CAJA NEGRA TRANSLÚCIDA */
 .hero__content-box {
-  background: rgba(26, 25, 21, 0.75); 
-  backdrop-filter: blur(8px); 
-  -webkit-backdrop-filter: blur(8px);
+  /* Eliminamos el background translúcido, blur y sombras */
+  background: transparent; 
   border-radius: var(--radius);
-  /* También reducimos un poco el relleno interno de esta caja para ahorrar espacio */
-  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  padding: clamp(1rem, 3vw, 2rem);
   max-width: 60ch;
   margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -144,10 +133,10 @@ button,input,select,textarea{font-family:inherit}
   position: sticky;
   top: 0; 
   z-index: 90;
-  background: rgba(26, 25, 21, 0.95); /* Fondo oscuro translúcido */
+  background: rgba(0, 0, 0, 0.95); /* Cambiamos a negro translúcido */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.15); /* Borde inferior sutilmente dorado */
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
 /* 3. COLORES DE LOS BOTONES DEL FILTRO */
