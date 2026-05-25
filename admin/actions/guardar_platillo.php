@@ -33,7 +33,7 @@ if (!empty($_FILES['imagen']['name'])) {
     // Obtener imagen anterior si es edición
     $old_imagen = null;
     if ($modo === 'editar' && $id) {
-        $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ? AND seccion = "c"');
         $stmt->execute([$id]);
         $old_imagen = $stmt->fetchColumn() ?: null;
     }
@@ -54,10 +54,10 @@ try {
         $_SESSION['flash_msg']  = "Platillo «{$nombre}» creado correctamente.";
     } elseif ($modo === 'editar' && $id) {
         if ($imagen) {
-            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, imagen=?, disponible=?, destacado=? WHERE id=?';
+            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, imagen=?, disponible=?, destacado=? WHERE id=? AND seccion = "c"';
             $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $imagen, $disponible, $destacado, $id]);
         } else {
-            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, disponible=?, destacado=? WHERE id=?';
+            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, disponible=?, destacado=? WHERE id=? AND seccion = "c"';
             $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $disponible, $destacado, $id]);
         }
         $_SESSION['flash_msg']  = "Platillo «{$nombre}» actualizado.";

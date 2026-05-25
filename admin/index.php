@@ -7,10 +7,10 @@ require_login();
 $pdo = DB::get();
 
 // Stats
-$total     = $pdo->query("SELECT COUNT(*) FROM platillos")->fetchColumn();
-$activos   = $pdo->query("SELECT COUNT(*) FROM platillos WHERE disponible=1")->fetchColumn();
+$total     = $pdo->query("SELECT COUNT(*) FROM platillos WHERE seccion = 'c'")->fetchColumn();
+$activos   = $pdo->query("SELECT COUNT(*) FROM platillos WHERE disponible=1 AND seccion = 'c'")->fetchColumn();
 $pausados  = $total - $activos;
-$total_cat = $pdo->query("SELECT COUNT(*) FROM categorias WHERE activo=1")->fetchColumn();
+$total_cat = $pdo->query("SELECT COUNT(*) FROM categorias WHERE activo=1 AND seccion = 'c'")->fetchColumn();
 
 // Mensajes de sesión
 $msg      = $_SESSION['flash_msg']  ?? '';
@@ -18,13 +18,14 @@ $msg_type = $_SESSION['flash_type'] ?? 'success';
 unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
 
 // Categorías para el select
-$categorias = $pdo->query("SELECT id, nombre FROM categorias WHERE activo=1 ORDER BY orden,id")->fetchAll();
+$categorias = $pdo->query("SELECT id, nombre FROM categorias WHERE activo=1 AND seccion = 'c' ORDER BY orden,id")->fetchAll();
 
 // Platillos con join a categoría
 $platillos = $pdo->query(
   "SELECT p.*, c.nombre AS cat_nombre
    FROM platillos p
    JOIN categorias c ON c.id = p.categoria_id
+   WHERE p.seccion = 'c'
    ORDER BY c.orden, p.orden, p.id"
 )->fetchAll();
 

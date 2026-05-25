@@ -55,12 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $msg = "Platillo «{$nombre}» creado correctamente.";
         } else {
           // Obtener imagen anterior
-          $prev = $mysqli->query("SELECT imagen FROM platillos WHERE id={$id} LIMIT 1")->fetch_assoc();
+          $prev = $mysqli->query("SELECT imagen FROM platillos WHERE id={$id} LIMIT 1 AND seccion = 'c'")->fetch_assoc();
           $imagenFinal = $imagenNueva ?? $prev['imagen'];
 
           $stmt = $mysqli->prepare(
             "UPDATE platillos SET categoria_id=?,nombre=?,descripcion=?,precio=?,imagen=?,destacado=?,activo=?,orden=?
-             WHERE id=?"
+             WHERE id=? AND seccion = 'c'"
           );
           $stmt->bind_param('issdsiisi', $catId,$nombre,$desc,$precio,$imagenFinal,$dest,$activo,$orden,$id);
           $stmt->execute();
@@ -79,15 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // TOGGLE ACTIVO
   if ($action === 'toggle_activo') {
     $id = (int)$_POST['id'];
-    $mysqli->query("UPDATE platillos SET activo = NOT activo WHERE id = {$id}");
+    $mysqli->query("UPDATE platillos SET activo = NOT activo WHERE id = {$id} AND seccion = 'c'");
     redirect('productos.php?msg=Estado+actualizado');
   }
 
   // ELIMINAR
   if ($action === 'eliminar') {
     $id = (int)$_POST['id'];
-    $prev = $mysqli->query("SELECT imagen FROM platillos WHERE id={$id} LIMIT 1")->fetch_assoc();
-    $mysqli->query("DELETE FROM platillos WHERE id = {$id}");
+    $prev = $mysqli->query("SELECT imagen FROM platillos WHERE id={$id} LIMIT 1 AND seccion = 'c'")->fetch_assoc();
+    $mysqli->query("DELETE FROM platillos WHERE id = {$id} AND seccion = 'c'");
     if ($prev['imagen']) @unlink($uploadDir . $prev['imagen']);
     redirect('productos.php?msg=Platillo+eliminado');
   }
@@ -106,7 +106,7 @@ $cats = $mysqli->query(
 $platillos = $mysqli->query(
   "SELECT p.*, c.nombre AS cat_nombre FROM platillos p
    JOIN categorias c ON p.categoria_id = c.id
-   ORDER BY c.orden ASC, p.orden ASC, p.nombre ASC"
+   ORDER BY c.orden ASC, p.orden ASC, p.nombre ASC WHERE seccion = 'c'"
 )->fetch_all(MYSQLI_ASSOC);
 
 // ¿Modo edición?

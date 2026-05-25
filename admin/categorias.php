@@ -25,21 +25,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->execute([$nombre, $slug, $orden]);
             $_SESSION['flash_msg']  = "Categoría «{$nombre}» creada.";
         } elseif ($accion === 'editar' && $id && $nombre) {
-            $pdo->prepare('UPDATE categorias SET nombre=?, slug=?, orden=? WHERE id=?')
+            $pdo->prepare('UPDATE categorias SET nombre=?, slug=?, orden=? WHERE id=? AND seccion = "c"')
                 ->execute([$nombre, $slug, $orden, $id]);
             $_SESSION['flash_msg']  = "Categoría «{$nombre}» actualizada.";
         } elseif ($accion === 'toggle' && $id) {
             $activo = (int)($_POST['activo'] ?? 0);
-            $pdo->prepare('UPDATE categorias SET activo=? WHERE id=?')->execute([$activo, $id]);
+            $pdo->prepare('UPDATE categorias SET activo=? WHERE id=? AND seccion = "c"')->execute([$activo, $id]);
             $_SESSION['flash_msg']  = $activo ? 'Categoría activada.' : 'Categoría desactivada.';
         } elseif ($accion === 'eliminar' && $id) {
-            $tiene = $pdo->prepare('SELECT COUNT(*) FROM platillos WHERE categoria_id=?');
+            $tiene = $pdo->prepare('SELECT COUNT(*) FROM platillos WHERE categoria_id=? AND seccion = "c"');
             $tiene->execute([$id]);
             if ($tiene->fetchColumn() > 0) {
                 $_SESSION['flash_msg']  = 'No se puede eliminar: la categoría tiene platillos asignados.';
                 $_SESSION['flash_type'] = 'error';
             } else {
-                $pdo->prepare('DELETE FROM categorias WHERE id=?')->execute([$id]);
+                $pdo->prepare('DELETE FROM categorias WHERE id=? AND seccion = "c"')->execute([$id]);
                 $_SESSION['flash_msg']  = 'Categoría eliminada.';
             }
         }
@@ -52,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $categorias = $pdo->query(
-    "SELECT c.*, (SELECT COUNT(*) FROM platillos p WHERE p.categoria_id=c.id) AS total_platillos
-     FROM categorias c ORDER BY c.orden, c.id"
+    "SELECT c.*, (SELECT COUNT(*) FROM platillos p WHERE p.categoria_id=c.id AND p.seccion = 'c') AS total_platillos
+     FROM categorias c WHERE c.seccion = 'c' ORDER BY c.orden, c.id"
 )->fetchAll();
 
 require __DIR__ . '/partials/header.php';

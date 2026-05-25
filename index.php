@@ -12,7 +12,7 @@ $pdo = DB::get();
 $cats = $pdo->query(
   "SELECT c.* FROM categorias c
    INNER JOIN platillos p ON p.categoria_id = c.id AND p.disponible = 1
-   WHERE c.activo = 1
+   WHERE c.activo = 1 AND c.seccion = 'c'
    GROUP BY c.id
    ORDER BY c.orden, c.id"
 )->fetchAll();
@@ -22,7 +22,7 @@ $platillos = [];
 if ($cats) {
   $ids   = implode(',', array_column($cats, 'id'));
   $rows  = $pdo->query(
-    "SELECT * FROM platillos WHERE disponible = 1 AND categoria_id IN ($ids) ORDER BY orden, id"
+    "SELECT * FROM platillos WHERE disponible = 1 AND categoria_id IN ($ids) AND seccion = 'c' ORDER BY orden, id" 
   )->fetchAll();
   foreach ($rows as $p) {
     $platillos[$p['categoria_id']][] = $p;
