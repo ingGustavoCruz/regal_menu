@@ -1,4 +1,3 @@
-<!-- ── MODAL NUEVO PLATILLO ───────────────────────────────── -->
 <div class="modal-backdrop" id="modalNuevo">
   <div class="modal">
     <div class="modal__header">
@@ -17,6 +16,28 @@
           <div class="form-group">
             <label class="form-label" for="n_precio">Precio (MXN) *</label>
             <input class="form-control" type="number" id="n_precio" name="precio" required min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="n_seccion">Sección *</label>
+            <select class="form-control" id="n_seccion" name="seccion" required>
+              <option value="c">Cafetería</option>
+              <option value="ch">Changarrito</option>
+              <option value="co">Comedor Institucional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="n_dia_semana">Día (Solo Comedor) *</label>
+            <select class="form-control" id="n_dia_semana" name="dia_semana" required>
+              <option value="Todos">Todos los días</option>
+              <option value="Lunes">Lunes</option>
+              <option value="Martes">Martes</option>
+              <option value="Miercoles">Miércoles</option>
+              <option value="Jueves">Jueves</option>
+              <option value="Viernes">Viernes</option>
+            </select>
           </div>
         </div>
 

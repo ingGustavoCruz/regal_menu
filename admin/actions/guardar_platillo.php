@@ -18,6 +18,10 @@ $cat_id      = (int)($_POST['categoria_id'] ?? 0);
 $disponible  = isset($_POST['disponible'])  ? 1 : 0;
 $destacado   = isset($_POST['destacado'])   ? 1 : 0;
 
+// ATRAPAMOS LOS NUEVOS CAMPOS (Si por alguna razón vienen vacíos, por defecto serán de la cafetería)
+$seccion     = $_POST['seccion']      ?? 'c';
+$dia_semana  = $_POST['dia_semana']   ?? 'Todos';
+
 // Validaciones básicas
 if (!$nombre || !$precio || !$cat_id) {
     $_SESSION['flash_msg']  = 'Faltan campos obligatorios.';
@@ -30,10 +34,10 @@ $imagen = null;
 
 // Procesar imagen si se subió
 if (!empty($_FILES['imagen']['name'])) {
-    // Obtener imagen anterior si es edición
+    // Obtener imagen anterior si es edición (QUITAMOS EL FILTRO DE SECCION='C')
     $old_imagen = null;
     if ($modo === 'editar' && $id) {
-        $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ? AND seccion = "c"');
+        $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ?');
         $stmt->execute([$id]);
         $old_imagen = $stmt->fetchColumn() ?: null;
     }
@@ -48,17 +52,19 @@ if (!empty($_FILES['imagen']['name'])) {
 
 try {
     if ($modo === 'nuevo') {
-        $sql = 'INSERT INTO platillos (categoria_id, nombre, descripcion, precio, imagen, disponible, destacado)
-                VALUES (?, ?, ?, ?, ?, ?, ?)';
-        $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $imagen, $disponible, $destacado]);
+        // AGREGAMOS SECCION Y DIA A LA INSERCIÓN
+        $sql = 'INSERT INTO platillos (categoria_id, nombre, descripcion, precio, imagen, disponible, destacado, seccion, dia_semana)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $imagen, $disponible, $destacado, $seccion, $dia_semana]);
         $_SESSION['flash_msg']  = "Platillo «{$nombre}» creado correctamente.";
     } elseif ($modo === 'editar' && $id) {
+        // AGREGAMOS SECCION Y DIA A LA EDICIÓN (Y QUITAR EL FILTRO 'C')
         if ($imagen) {
-            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, imagen=?, disponible=?, destacado=? WHERE id=? AND seccion = "c"';
-            $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $imagen, $disponible, $destacado, $id]);
+            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, imagen=?, disponible=?, destacado=?, seccion=?, dia_semana=? WHERE id=?';
+            $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $imagen, $disponible, $destacado, $seccion, $dia_semana, $id]);
         } else {
-            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, disponible=?, destacado=? WHERE id=? AND seccion = "c"';
-            $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $disponible, $destacado, $id]);
+            $sql = 'UPDATE platillos SET categoria_id=?, nombre=?, descripcion=?, precio=?, disponible=?, destacado=?, seccion=?, dia_semana=? WHERE id=?';
+            $pdo->prepare($sql)->execute([$cat_id, $nombre, $descripcion, $precio, $disponible, $destacado, $seccion, $dia_semana, $id]);
         }
         $_SESSION['flash_msg']  = "Platillo «{$nombre}» actualizado.";
     }

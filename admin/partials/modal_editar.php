@@ -1,4 +1,3 @@
-<!-- ── MODAL EDITAR PLATILLO ─────────────────────────────── -->
 <div class="modal-backdrop" id="modalEditar">
   <div class="modal">
     <div class="modal__header">
@@ -18,6 +17,28 @@
           <div class="form-group">
             <label class="form-label" for="e_precio">Precio (MXN) *</label>
             <input class="form-control" type="number" id="e_precio" name="precio" required min="0" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="e_seccion">Sección *</label>
+            <select class="form-control" id="e_seccion" name="seccion" required>
+              <option value="c">Cafetería</option>
+              <option value="ch">Changarrito</option>
+              <option value="co">Comedor Institucional</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="e_dia_semana">Día (Solo Comedor) *</label>
+            <select class="form-control" id="e_dia_semana" name="dia_semana" required>
+              <option value="Todos">Todos los días</option>
+              <option value="Lunes">Lunes</option>
+              <option value="Martes">Martes</option>
+              <option value="Miercoles">Miércoles</option>
+              <option value="Jueves">Jueves</option>
+              <option value="Viernes">Viernes</option>
+            </select>
           </div>
         </div>
 
@@ -84,11 +105,15 @@ function abrirEditar(data) {
   const modal = document.getElementById('modalEditar');
   if (!modal) return;
 
-  modal.querySelector('[name="id"]').value        = data.id;
-  modal.querySelector('[name="nombre"]').value    = data.nombre;
-  modal.querySelector('[name="descripcion"]').value = data.descripcion || '';
-  modal.querySelector('[name="precio"]').value    = data.precio;
+  modal.querySelector('[name="id"]').value           = data.id;
+  modal.querySelector('[name="nombre"]').value       = data.nombre;
+  modal.querySelector('[name="descripcion"]').value  = data.descripcion || '';
+  modal.querySelector('[name="precio"]').value       = data.precio;
   modal.querySelector('[name="categoria_id"]').value = data.categoria_id;
+  
+  // Agregamos las nuevas variables al JS
+  modal.querySelector('[name="seccion"]').value      = data.seccion;
+  modal.querySelector('[name="dia_semana"]').value   = data.dia_semana;
 
   const dispChk = modal.querySelector('[name="disponible"]');
   const destChk = modal.querySelector('[name="destacado"]');

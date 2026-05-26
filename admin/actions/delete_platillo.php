@@ -13,14 +13,16 @@ $id  = (int)($_POST['id'] ?? 0);
 $pdo = DB::get();
 
 if ($id) {
-    // Borrar imagen del disco
-    $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ? AND seccion = "c"');
+    // Borrar imagen del disco (Quitamos el filtro AND seccion = "c")
+    $stmt = $pdo->prepare('SELECT imagen FROM platillos WHERE id = ?');
     $stmt->execute([$id]);
     $imagen = $stmt->fetchColumn();
     if ($imagen && file_exists(UPLOAD_DIR . $imagen)) {
         @unlink(UPLOAD_DIR . $imagen);
     }
-    $pdo->prepare('DELETE FROM platillos WHERE id = ? AND seccion = "c"')->execute([$id]);
+    
+    // Quitamos el filtro AND seccion = "c" de la eliminación
+    $pdo->prepare('DELETE FROM platillos WHERE id = ?')->execute([$id]);
     $_SESSION['flash_msg']  = 'Platillo eliminado correctamente.';
     $_SESSION['flash_type'] = 'success';
 }

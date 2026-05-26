@@ -13,33 +13,41 @@ unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
 
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $accion = $_POST['accion'] ?? '';
-    $id     = (int)($_POST['id'] ?? 0);
-    $nombre = trim($_POST['nombre'] ?? '');
-    $slug   = preg_replace('/[^a-z0-9]+/','-', strtolower(iconv('UTF-8','ASCII//TRANSLIT',$nombre)));
-    $orden  = (int)($_POST['orden'] ?? 0);
+    $accion  = $_POST['accion'] ?? '';
+    $id      = (int)($_POST['id'] ?? 0);
+    $nombre  = trim($_POST['nombre'] ?? '');
+    $slug    = preg_replace('/[^a-z0-9]+/','-', strtolower(iconv('UTF-8','ASCII//TRANSLIT',$nombre)));
+    $orden   = (int)($_POST['orden'] ?? 0);
+    
+    // Atrapamos la sección (por defecto 'c' para cafetería)
+    $seccion = $_POST['seccion'] ?? 'c';
 
     try {
         if ($accion === 'nueva' && $nombre) {
-            $pdo->prepare('INSERT INTO categorias (nombre, slug, orden) VALUES (?, ?, ?)')
-                ->execute([$nombre, $slug, $orden]);
+            // Agregamos la columna 'seccion' al INSERT
+            $pdo->prepare('INSERT INTO categorias (nombre, slug, orden, seccion) VALUES (?, ?, ?, ?)')
+                ->execute([$nombre, $slug, $orden, $seccion]);
             $_SESSION['flash_msg']  = "Categoría «{$nombre}» creada.";
         } elseif ($accion === 'editar' && $id && $nombre) {
-            $pdo->prepare('UPDATE categorias SET nombre=?, slug=?, orden=? WHERE id=? AND seccion = "c"')
-                ->execute([$nombre, $slug, $orden, $id]);
+            // Agregamos la columna 'seccion' al UPDATE (y quitamos el filtro 'c')
+            $pdo->prepare('UPDATE categorias SET nombre=?, slug=?, orden=?, seccion=? WHERE id=?')
+                ->execute([$nombre, $slug, $orden, $seccion, $id]);
             $_SESSION['flash_msg']  = "Categoría «{$nombre}» actualizada.";
         } elseif ($accion === 'toggle' && $id) {
             $activo = (int)($_POST['activo'] ?? 0);
-            $pdo->prepare('UPDATE categorias SET activo=? WHERE id=? AND seccion = "c"')->execute([$activo, $id]);
+            // Quitamos el filtro 'c'
+            $pdo->prepare('UPDATE categorias SET activo=? WHERE id=?')->execute([$activo, $id]);
             $_SESSION['flash_msg']  = $activo ? 'Categoría activada.' : 'Categoría desactivada.';
         } elseif ($accion === 'eliminar' && $id) {
-            $tiene = $pdo->prepare('SELECT COUNT(*) FROM platillos WHERE categoria_id=? AND seccion = "c"');
+            // Quitamos el filtro 'c'
+            $tiene = $pdo->prepare('SELECT COUNT(*) FROM platillos WHERE categoria_id=?');
             $tiene->execute([$id]);
             if ($tiene->fetchColumn() > 0) {
                 $_SESSION['flash_msg']  = 'No se puede eliminar: la categoría tiene platillos asignados.';
                 $_SESSION['flash_type'] = 'error';
             } else {
-                $pdo->prepare('DELETE FROM categorias WHERE id=? AND seccion = "c"')->execute([$id]);
+                // Quitamos el filtro 'c'
+                $pdo->prepare('DELETE FROM categorias WHERE id=?')->execute([$id]);
                 $_SESSION['flash_msg']  = 'Categoría eliminada.';
             }
         }
@@ -51,9 +59,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: ' . BASE_URL . '/admin/categorias.php'); exit;
 }
 
+// Quitamos el filtro 'c' para que liste todas las categorías
 $categorias = $pdo->query(
-    "SELECT c.*, (SELECT COUNT(*) FROM platillos p WHERE p.categoria_id=c.id AND p.seccion = 'c') AS total_platillos
-     FROM categorias c WHERE c.seccion = 'c' ORDER BY c.orden, c.id"
+    "SELECT c.*, (SELECT COUNT(*) FROM platillos p WHERE p.categoria_id=c.id) AS total_platillos
+     FROM categorias c ORDER BY c.seccion, c.orden, c.id"
 )->fetchAll();
 
 require __DIR__ . '/partials/header.php';
@@ -65,7 +74,6 @@ require __DIR__ . '/partials/header.php';
 
 <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 340px;align-items:start" class="cat-layout">
 
-  <!-- Lista de categorías -->
   <div class="table-wrap">
     <div class="table-toolbar">
       <span class="table-toolbar__title">Categorías del menú</span>
@@ -75,7 +83,7 @@ require __DIR__ . '/partials/header.php';
         <tr>
           <th>#</th>
           <th>Nombre</th>
-          <th>Slug</th>
+          <th>Sección</th>
           <th>Platillos</th>
           <th>Estado</th>
           <th>Acciones</th>
@@ -85,8 +93,19 @@ require __DIR__ . '/partials/header.php';
         <?php foreach ($categorias as $c): ?>
         <tr>
           <td style="color:#8d7b72;font-size:0.8rem"><?= $c['orden'] ?: '—' ?></td>
-          <td style="font-weight:500"><?= htmlspecialchars($c['nombre']) ?></td>
-          <td style="font-family:monospace;font-size:0.78rem;color:#8d7b72"><?= htmlspecialchars($c['slug']) ?></td>
+          <td style="font-weight:500">
+            <?= htmlspecialchars($c['nombre']) ?><br>
+            <span style="font-family:monospace;font-size:0.78rem;color:#8d7b72"><?= htmlspecialchars($c['slug']) ?></span>
+          </td>
+          <td>
+             <?php if($c['seccion'] == 'c'): ?>
+                <span class="badge" style="background:#8b5a2b; color:white;">Cafetería</span>
+              <?php elseif($c['seccion'] == 'ch'): ?>
+                <span class="badge" style="background:#e67e22; color:white;">Changarrito</span>
+              <?php elseif($c['seccion'] == 'co'): ?>
+                <span class="badge" style="background:#2980b9; color:white;">Comedor</span>
+              <?php endif; ?>
+          </td>
           <td><?= $c['total_platillos'] ?></td>
           <td>
             <?php if ($c['activo']): ?>
@@ -97,13 +116,11 @@ require __DIR__ . '/partials/header.php';
           </td>
           <td>
             <div class="td-actions">
-              <!-- Editar -->
               <button class="btn btn--outline btn--sm"
-                onclick="abrirEditarCat({id: '<?= $c['id'] ?>', nombre: <?= htmlspecialchars(json_encode($c['nombre']), ENT_QUOTES, 'UTF-8') ?>, orden: '<?= $c['orden'] ?>'})">
+                onclick="abrirEditarCat({id: '<?= $c['id'] ?>', nombre: <?= htmlspecialchars(json_encode($c['nombre']), ENT_QUOTES, 'UTF-8') ?>, orden: '<?= $c['orden'] ?>', seccion: '<?= $c['seccion'] ?>'})">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 Editar
               </button>
-              <!-- Toggle -->
               <form method="POST">
                 <input type="hidden" name="accion" value="toggle">
                 <input type="hidden" name="id" value="<?= $c['id'] ?>">
@@ -116,7 +133,6 @@ require __DIR__ . '/partials/header.php';
                   <?php endif; ?>
                 </button>
               </form>
-              <!-- Eliminar -->
               <?php if ($c['total_platillos'] == 0): ?>
               <form method="POST" onsubmit="return confirm('¿Eliminar esta categoría?')">
                 <input type="hidden" name="accion" value="eliminar">
@@ -134,7 +150,6 @@ require __DIR__ . '/partials/header.php';
     </table>
   </div>
 
-  <!-- Panel lateral: Nueva categoría -->
   <div class="table-wrap" style="padding:1.25rem">
     <h2 class="table-toolbar__title" style="margin-bottom:1.25rem">Nueva categoría</h2>
     <form method="POST">
@@ -142,6 +157,14 @@ require __DIR__ . '/partials/header.php';
       <div class="form-group">
         <label class="form-label" for="c_nombre">Nombre *</label>
         <input class="form-control" type="text" id="c_nombre" name="nombre" required maxlength="80" placeholder="Ej: Bebidas Calientes">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="c_seccion">Sección *</label>
+        <select class="form-control" id="c_seccion" name="seccion" required>
+            <option value="c">Cafetería</option>
+            <option value="ch">Changarrito</option>
+            <option value="co">Comedor Institucional</option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="c_orden">Orden de aparición</label>
@@ -157,7 +180,6 @@ require __DIR__ . '/partials/header.php';
 
 </div>
 
-<!-- Modal editar categoría -->
 <div class="modal-backdrop" id="modalEditarCat">
   <div class="modal" style="max-width:420px">
     <div class="modal__header">
@@ -171,6 +193,14 @@ require __DIR__ . '/partials/header.php';
         <div class="form-group">
           <label class="form-label" for="ec_nombre">Nombre *</label>
           <input class="form-control" type="text" id="ec_nombre" name="nombre" required maxlength="80">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ec_seccion">Sección *</label>
+          <select class="form-control" id="ec_seccion" name="seccion" required>
+              <option value="c">Cafetería</option>
+              <option value="ch">Changarrito</option>
+              <option value="co">Comedor Institucional</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label" for="ec_orden">Orden</label>
@@ -190,9 +220,10 @@ require __DIR__ . '/partials/header.php';
 </style>
 <script>
 function abrirEditarCat(data) {
-  document.getElementById('ec_id').value     = data.id;
-  document.getElementById('ec_nombre').value = data.nombre;
-  document.getElementById('ec_orden').value  = data.orden;
+  document.getElementById('ec_id').value      = data.id;
+  document.getElementById('ec_nombre').value  = data.nombre;
+  document.getElementById('ec_seccion').value = data.seccion; // <- Agregamos esta línea
+  document.getElementById('ec_orden').value   = data.orden;
   document.getElementById('modalEditarCat').classList.add('abierto');
 }
 </script>

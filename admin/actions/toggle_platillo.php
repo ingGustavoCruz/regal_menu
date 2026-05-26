@@ -12,7 +12,8 @@ $id         = (int)($_POST['id']         ?? 0);
 $disponible = (int)($_POST['disponible'] ?? 0);
 
 if ($id) {
-    $stmt = DB::get()->prepare('UPDATE platillos SET disponible = ? WHERE id = ? AND seccion = "c"');
+    // Quitamos el filtro AND seccion = "c"
+    $stmt = DB::get()->prepare('UPDATE platillos SET disponible = ? WHERE id = ?');
     $stmt->execute([$disponible ? 1 : 0, $id]);
     $_SESSION['flash_msg']  = $disponible ? 'Platillo activado en el menú.' : 'Platillo pausado del menú.';
     $_SESSION['flash_type'] = 'success';

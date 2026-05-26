@@ -6,33 +6,31 @@ require_login();
 
 $pdo = DB::get();
 
-// Stats
-$total     = $pdo->query("SELECT COUNT(*) FROM platillos WHERE seccion = 'c'")->fetchColumn();
-$activos   = $pdo->query("SELECT COUNT(*) FROM platillos WHERE disponible=1 AND seccion = 'c'")->fetchColumn();
+// Stats (Ahora leen toda la base de datos)
+$total     = $pdo->query("SELECT COUNT(*) FROM platillos")->fetchColumn();
+$activos   = $pdo->query("SELECT COUNT(*) FROM platillos WHERE disponible=1")->fetchColumn();
 $pausados  = $total - $activos;
-$total_cat = $pdo->query("SELECT COUNT(*) FROM categorias WHERE activo=1 AND seccion = 'c'")->fetchColumn();
+$total_cat = $pdo->query("SELECT COUNT(*) FROM categorias WHERE activo=1")->fetchColumn();
 
 // Mensajes de sesión
 $msg      = $_SESSION['flash_msg']  ?? '';
 $msg_type = $_SESSION['flash_type'] ?? 'success';
 unset($_SESSION['flash_msg'], $_SESSION['flash_type']);
 
-// Categorías para el select
-$categorias = $pdo->query("SELECT id, nombre FROM categorias WHERE activo=1 AND seccion = 'c' ORDER BY orden,id")->fetchAll();
+// Categorías para el select (Ahora lee todas)
+$categorias = $pdo->query("SELECT id, nombre FROM categorias WHERE activo=1 ORDER BY orden,id")->fetchAll();
 
-// Platillos con join a categoría
+// Platillos con join a categoría (Ahora lee todas las secciones)
 $platillos = $pdo->query(
   "SELECT p.*, c.nombre AS cat_nombre
    FROM platillos p
    JOIN categorias c ON c.id = p.categoria_id
-   WHERE p.seccion = 'c'
-   ORDER BY c.orden, p.orden, p.id"
+   ORDER BY p.seccion, c.orden, p.orden, p.id"
 )->fetchAll();
 
 require __DIR__ . '/partials/header.php';
 ?>
 
-<!-- Stats -->
 <div class="stats-grid">
   <div class="stat-card">
     <div class="stat-card__icon ic-verde">
@@ -76,24 +74,20 @@ require __DIR__ . '/partials/header.php';
   <div class="alert alert--<?= $msg_type ?>" data-auto-dismiss><?= htmlspecialchars($msg) ?></div>
 <?php endif; ?>
 
-<!-- Tabla de platillos -->
 <div class="table-wrap">
   <div class="table-toolbar">
     <span class="table-toolbar__title">Platillos</span>
     <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center">
-      <!-- Filtro categoría -->
       <select id="catFilter" class="form-control" style="width:auto;padding:0.45rem 0.75rem">
         <option value="">Todas las categorías</option>
         <?php foreach ($categorias as $c): ?>
           <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nombre']) ?></option>
         <?php endforeach; ?>
       </select>
-      <!-- Búsqueda -->
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input class="search-input" id="tablaSearch" type="search" placeholder="Buscar…">
       </div>
-      <!-- Nuevo platillo -->
       <button class="btn btn--primary" data-modal-open="modalNuevo">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nuevo platillo
@@ -106,6 +100,7 @@ require __DIR__ . '/partials/header.php';
       <thead>
         <tr>
           <th>Foto</th>
+          <th>Sección / Día</th>
           <th>Nombre</th>
           <th>Categoría</th>
           <th>Precio</th>
@@ -122,6 +117,19 @@ require __DIR__ . '/partials/header.php';
               <?php else: ?>
                 <div class="td-img" style="background:#f0ece8;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#c0b8b0;font-size:1.2rem">☕</div>
               <?php endif; ?>
+            </td>
+            <td>
+              <?php if($p['seccion'] == 'c'): ?>
+                <span class="badge" style="background:#8b5a2b; color:white;">Cafetería</span>
+              <?php elseif($p['seccion'] == 'ch'): ?>
+                <span class="badge" style="background:#e67e22; color:white;">Changarrito</span>
+              <?php elseif($p['seccion'] == 'co'): ?>
+                <span class="badge" style="background:#2980b9; color:white;">Comedor</span>
+              <?php endif; ?>
+              
+              <div style="font-size: 0.85em; color: #666; margin-top: 4px; font-weight: bold;">
+                <?= htmlspecialchars($p['dia_semana']) ?>
+              </div>
             </td>
             <td>
               <div class="td-nombre"><?= htmlspecialchars($p['nombre']) ?></div>
@@ -145,6 +153,8 @@ require __DIR__ . '/partials/header.php';
                     descripcion:<?= htmlspecialchars(json_encode($p['descripcion']), ENT_QUOTES, 'UTF-8') ?>,
                     precio:'<?= $p['precio'] ?>',
                     categoria_id:'<?= $p['categoria_id'] ?>',
+                    seccion:'<?= $p['seccion'] ?>',
+                    dia_semana:'<?= $p['dia_semana'] ?>',
                     disponible:'<?= $p['disponible'] ?>',
                     destacado:'<?= $p['destacado'] ?>',
                     imagen:<?= htmlspecialchars(json_encode($p['imagen']), ENT_QUOTES, 'UTF-8') ?>,
@@ -153,7 +163,6 @@ require __DIR__ . '/partials/header.php';
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                   Editar
                 </button>
-                <!-- Toggle disponible -->
                 <form method="POST" action="actions/toggle_platillo.php">
                   <input type="hidden" name="id" value="<?= $p['id'] ?>">
                   <input type="hidden" name="disponible" value="<?= $p['disponible'] ? 0 : 1 ?>">
@@ -165,7 +174,6 @@ require __DIR__ . '/partials/header.php';
                     <?php endif; ?>
                   </button>
                 </form>
-                <!-- Eliminar -->
                 <form method="POST" action="actions/delete_platillo.php" onsubmit="confirmarEliminar(this);return false">
                   <input type="hidden" name="id" value="<?= $p['id'] ?>">
                   <button class="btn btn--danger btn--sm btn--icon" type="submit" title="Eliminar">
@@ -177,7 +185,7 @@ require __DIR__ . '/partials/header.php';
           </tr>
         <?php endforeach; ?>
         <?php if (!$platillos): ?>
-          <tr><td colspan="6" style="text-align:center;padding:3rem;color:#8d7b72">No hay platillos registrados aún.</td></tr>
+          <tr><td colspan="7" style="text-align:center;padding:3rem;color:#8d7b72">No hay platillos registrados aún.</td></tr>
         <?php endif; ?>
       </tbody>
     </table>
