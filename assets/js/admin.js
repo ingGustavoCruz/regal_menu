@@ -73,14 +73,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Filtro de categoría en tabla ─────────────────────────
+  // ── Filtro de categoría en tabla (CON MEMORIA) ───────────
   const catFilter = document.getElementById('catFilter');
   if (catFilter) {
-    catFilter.addEventListener('change', () => {
-      const val = catFilter.value;
-      document.querySelectorAll('tbody tr').forEach(row => {
+    // Función centralizada para aplicar el filtro visualmente
+    const applyFilter = (val) => {
+      document.querySelectorAll('tbody tr[data-cat]').forEach(row => {
         row.style.display = (!val || row.dataset.cat === val) ? '' : 'none';
       });
+    };
+
+    // 1. Al cargar la página, revisar si hay un filtro guardado
+    const savedFilter = localStorage.getItem('admin_cat_filter');
+    if (savedFilter) {
+      catFilter.value = savedFilter;
+      applyFilter(savedFilter);
+    }
+
+    // 2. Escuchar cambios, guardarlos en memoria y aplicar
+    catFilter.addEventListener('change', () => {
+      const val = catFilter.value;
+      localStorage.setItem('admin_cat_filter', val);
+      applyFilter(val);
     });
   }
 
